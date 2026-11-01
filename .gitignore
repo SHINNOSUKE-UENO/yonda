@@ -1,1 +1,50 @@
+# Claude
 CLAUDE.local.md
+
+# Secrets / env (Cloudflare)
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+
+# Cloudflare / Wrangler
+.wrangler/
+
+# Dependencies
+node_modules/
+
+# Build output (TanStack Start / Vite)
+dist/
+.output/
+.vinxi/
+.tanstack/
+.nitro/
+dev-dist/
+
+# Test / coverage
+coverage/
+test-results/
+playwright-report/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
