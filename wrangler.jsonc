@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yonda",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": { "enabled": true },
+  "upload_source_maps": true,
+  // プレビュー URL は Access で保護しないため無効化(設計書 6 章)
+  "preview_urls": false,
+  // 秘密ではない変数のみ。シークレットは `wrangler secret put` で登録する
+  "vars": {
+    "CF_ACCESS_TEAM_DOMAIN": "",
+    "CF_ACCESS_AUD": ""
+  }
+  // D1 は着手順 2 で追加する
+  // "d1_databases": [{ "binding": "DB", "database_name": "yonda", "database_id": "<id>", "migrations_dir": "migrations" }]
+}
