@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  lightningcss: true
+  sharp: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - ws@8.22.1
