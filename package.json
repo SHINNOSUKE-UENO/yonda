@@ -14,7 +14,10 @@
     "cf-typegen": "wrangler types",
     "test": "vitest",
     "test:run": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "@tanstack/react-devtools": "0.10.14",
@@ -32,6 +35,8 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^5.0.5",
