@@ -13,6 +13,14 @@
     "CF_ACCESS_TEAM_DOMAIN": "",
     "CF_ACCESS_AUD": "",
   },
-  // D1 は着手順 2 で追加する
-  // "d1_databases": [{ "binding": "DB", "database_name": "yonda", "database_id": "<id>", "migrations_dir": "migrations" }]
+  // database_id は本番 DB 作成時(着手順 5)に `wrangler d1 create yonda` の値へ差し替える。
+  // それまではローカル(--local)のみで使うため仮の値を入れている
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "yonda",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
 }
