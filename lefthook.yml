@@ -1,6 +1,8 @@
 pre-commit:
   piped: true
   commands:
+    secrets:
+      run: gitleaks git --staged --redact
     format:
       glob: "*.{js,jsx,ts,tsx,json,jsonc,md,yml,yaml}"
       run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
