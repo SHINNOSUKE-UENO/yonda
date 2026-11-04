@@ -29,6 +29,8 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@tanstack/devtools-vite": "0.8.6",
     "@tanstack/router-cli": "^1.132.0",
     "@types/node": "^26.6.6",

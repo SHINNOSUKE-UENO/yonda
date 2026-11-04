@@ -8,3 +8,8 @@ pre-commit:
     lint:
       glob: "*.{js,jsx,ts,tsx}"
       run: pnpm exec oxlint --no-error-on-unmatched-pattern {staged_files}
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
