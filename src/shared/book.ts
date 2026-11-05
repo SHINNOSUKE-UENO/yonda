@@ -1,0 +1,24 @@
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { books } from "./db/schema";
+
+/** 登録済みの本(books テーブルの 1 行) */
+export type Book = typeof books.$inferSelect;
+
+/** 検索結果から登録するときの入力 */
+export const registerBookInput = createInsertSchema(books, {
+  googleBooksId: (schema) => schema.min(1),
+  title: (schema) => schema.min(1),
+  thumbnailUrl: z.url().nullable(),
+}).pick({ googleBooksId: true, title: true, authors: true, thumbnailUrl: true });
+export type RegisterBookInput = z.infer<typeof registerBookInput>;
+
+/** 詳細画面で保存するときの入力 */
+export const updateBookInput = createSelectSchema(books, {
+  id: z.uuid(),
+  readDate: z.iso.date({ error: "読了日を入力してください" }),
+}).pick({ id: true, readDate: true, memo: true });
+export type UpdateBookInput = z.infer<typeof updateBookInput>;
+
+/** 1 件取得・削除の入力 */
+export const bookIdInput = createSelectSchema(books, { id: z.uuid() }).pick({ id: true });
