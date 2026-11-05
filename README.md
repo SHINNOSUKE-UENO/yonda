@@ -18,4 +18,6 @@ pnpm dev
 - ローカルの DB は `.wrangler/state/` に保存される。
 - `.wrangler/` を削除すると、ローカルの DB(登録した本のデータ)も消える。
   - 復旧するには、マイグレーションをもう一度適用する(テーブルは作り直されるが、データは戻らない)。
-- マイグレーションを追加するときは `pnpm exec wrangler d1 migrations create DB <名前>` を使う。
+- テーブル定義は `src/shared/db/schema.ts`(Drizzle)を正とする。変更したら次の手順でマイグレーションを生成・適用する。
+  1. `pnpm exec drizzle-kit generate --name <名前>` で `migrations/` に SQL を生成する(生成物はコミットする)。
+  2. `pnpm exec wrangler d1 migrations apply DB --local` でローカルに適用する。
