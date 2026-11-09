@@ -1,4 +1,6 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { Provider } from "#/components/ui/provider";
+import { Toaster } from "#/components/ui/toaster";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -13,12 +15,16 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja">
+    // next-themes が <html> に dark / light クラスを付けるため、ハイドレーション警告を抑止する
+    <html lang="ja" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <Provider>
+          {children}
+          <Toaster />
+        </Provider>
         <Scripts />
       </body>
     </html>
