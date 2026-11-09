@@ -5,6 +5,7 @@
     "worker-configuration.d.ts",
     "pnpm-lock.yaml",
     "docs",
-    "migrations/meta"
+    "migrations/meta",
+    ".agents/skills"
   ]
 }
