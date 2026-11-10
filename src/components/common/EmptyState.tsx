@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 type Props = {
   icon: ReactNode;
-  title: string;
+  title?: string;
   description: string;
   /** 行動ボタン(例: 本を検索する) */
   children?: ReactNode;
@@ -20,9 +20,11 @@ export function EmptyState({ icon, title, description, children }: Props) {
           </Circle>
         </ChakraEmptyState.Indicator>
         <VStack gap="2" textAlign="center">
-          <ChakraEmptyState.Title fontSize="md" fontWeight="bold">
-            {title}
-          </ChakraEmptyState.Title>
+          {title && (
+            <ChakraEmptyState.Title fontSize="md" fontWeight="bold">
+              {title}
+            </ChakraEmptyState.Title>
+          )}
           <ChakraEmptyState.Description fontSize="sm" color="fg.muted">
             {description}
           </ChakraEmptyState.Description>
