@@ -5,6 +5,7 @@ import { LuCircleAlert, LuSearch } from "react-icons/lu";
 import { BookCard } from "#/components/book/BookCard";
 import { BookCardSkeleton } from "#/components/book/BookCardSkeleton";
 import { EmptyState } from "#/components/common/EmptyState";
+import { LoadMoreButton } from "#/components/common/LoadMoreButton";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
 import { useBookSearch } from "#/features/search/useBookSearch";
@@ -14,7 +15,8 @@ export const Route = createFileRoute("/search")({ component: SearchPage });
 function SearchPage() {
   // 検索ボタン(またはキーボードの検索キー)を押した時点の値で検索する
   const [query, setQuery] = useState("");
-  const { status, results, retry } = useBookSearch(query);
+  const { status, results, retry, loadMoreStatus, loadMore, register, registeringId } =
+    useBookSearch(query);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,8 +96,14 @@ function SearchPage() {
                 title={book.title}
                 authors={book.authors}
                 thumbnailUrl={book.thumbnailUrl}
+                register={{
+                  registered: book.registered,
+                  loading: registeringId === book.googleBooksId,
+                  onClick: () => register(book),
+                }}
               />
             ))}
+            <LoadMoreButton status={loadMoreStatus} onClick={loadMore} />
           </Stack>
         )}
       </Box>
