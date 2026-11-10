@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Book } from "#/shared/book";
 import { useShelfTable } from "./useShelfTable";
 
@@ -43,5 +43,42 @@ describe("useShelfTable", () => {
 
     act(() => result.current.setSort("createdAt-asc"));
     expect(titles(result)).toEqual(["A", "C", "B"]);
+  });
+
+  describe("10 件ずつの表示", () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    const many = Array.from({ length: 25 }, (_, i) =>
+      book(`本${i}`, { readDate: `2026-01-${String(i + 1).padStart(2, "0")}` }),
+    );
+
+    it("少し待ってから 10 件ずつ追加し、全件表示後は done になる", () => {
+      const { result } = renderHook(() => useShelfTable(many));
+      expect(result.current.books).toHaveLength(10);
+      expect(result.current.loadMoreStatus).toBe("idle");
+
+      act(() => result.current.loadMore());
+      expect(result.current.loadMoreStatus).toBe("loading");
+      expect(result.current.books).toHaveLength(10);
+
+      act(() => vi.runAllTimers());
+      expect(result.current.books).toHaveLength(20);
+
+      act(() => result.current.loadMore());
+      act(() => vi.runAllTimers());
+      expect(result.current.books).toHaveLength(25);
+      expect(result.current.loadMoreStatus).toBe("done");
+    });
+
+    it("並び替えを変えると先頭 10 件に戻る", () => {
+      const { result } = renderHook(() => useShelfTable(many));
+      act(() => result.current.loadMore());
+      act(() => vi.runAllTimers());
+
+      act(() => result.current.setSort("readDate-asc"));
+      expect(result.current.books).toHaveLength(10);
+      expect(result.current.books[0].title).toBe("本0");
+    });
   });
 });

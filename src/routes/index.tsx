@@ -5,6 +5,7 @@ import { LuBookOpen } from "react-icons/lu";
 import { BookCard } from "#/components/book/BookCard";
 import { BookCardSkeleton } from "#/components/book/BookCardSkeleton";
 import { EmptyState } from "#/components/common/EmptyState";
+import { LoadMoreButton } from "#/components/common/LoadMoreButton";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
 import { type SortOption, sortOptions } from "#/features/shelf/sortOptions";
@@ -18,7 +19,9 @@ export const Route = createFileRoute("/")({
 });
 
 function ShelfPage() {
-  const { books, total, sort, setSort } = useShelfTable(Route.useLoaderData());
+  const { books, total, sort, setSort, loadMoreStatus, loadMore } = useShelfTable(
+    Route.useLoaderData(),
+  );
 
   if (total === 0) {
     return (
@@ -68,6 +71,8 @@ function ShelfPage() {
             readDate={book.readDate}
           />
         ))}
+        {/* 10 件以下のときはボタンも「これ以上ありません」も出さない */}
+        {total > 10 && <LoadMoreButton status={loadMoreStatus} onClick={loadMore} />}
       </Stack>
     </ShelfLayout>
   );
