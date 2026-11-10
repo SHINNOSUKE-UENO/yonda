@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@chakra-ui/react";
+import { Box, Button, HStack, NativeSelect, Stack, Text } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LuBookOpen } from "react-icons/lu";
@@ -7,6 +7,8 @@ import { BookCardSkeleton } from "#/components/book/BookCardSkeleton";
 import { EmptyState } from "#/components/common/EmptyState";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
+import { type SortOption, sortOptions } from "#/features/shelf/sortOptions";
+import { useShelfTable } from "#/features/shelf/useShelfTable";
 import { listBooks } from "#/server/functions/books";
 
 export const Route = createFileRoute("/")({
@@ -16,9 +18,9 @@ export const Route = createFileRoute("/")({
 });
 
 function ShelfPage() {
-  const books = Route.useLoaderData();
+  const { books, total, sort, setSort } = useShelfTable(Route.useLoaderData());
 
-  if (books.length === 0) {
+  if (total === 0) {
     return (
       <ShelfLayout>
         <EmptyState
@@ -36,6 +38,25 @@ function ShelfPage() {
 
   return (
     <ShelfLayout>
+      <HStack gap="3" mb="4">
+        <NativeSelect.Root flex="1">
+          <NativeSelect.Field
+            aria-label="並び替え"
+            value={sort}
+            onChange={(e) => setSort(e.currentTarget.value as SortOption)}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+        <Text fontSize="xs" color="fg.muted" flexShrink="0">
+          全 {total} 冊
+        </Text>
+      </HStack>
       <Stack gap="3">
         {books.map((book) => (
           <BookCard
