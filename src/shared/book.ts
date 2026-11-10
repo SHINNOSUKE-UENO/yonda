@@ -13,6 +13,16 @@ export const registerBookInput = createInsertSchema(books, {
 }).pick({ googleBooksId: true, title: true, authors: true, thumbnailUrl: true });
 export type RegisterBookInput = z.infer<typeof registerBookInput>;
 
+/** 検索結果の 1 冊(登録時はこの値をそのまま送る) */
+export type SearchBook = RegisterBookInput;
+export type SearchResult = SearchBook & { registered: boolean };
+
+/** 検索の入力。startIndex は 0 始まり */
+export const searchBooksInput = z.object({
+  query: z.string().trim().min(1),
+  startIndex: z.int().min(0),
+});
+
 /** 詳細画面で保存するときの入力 */
 export const updateBookInput = createSelectSchema(books, {
   id: z.uuid(),
