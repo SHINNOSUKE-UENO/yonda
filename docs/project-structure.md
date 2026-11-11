@@ -45,15 +45,16 @@
 .
 ├─ src/
 │  ├─ routes/                  # 画面(TanStack Router のファイルルーティング)
-│  │  ├─ __root.tsx            # Chakra Provider、ヘッダー、タブバー、オフラインバナー
+│  │  ├─ __root.tsx            # Chakra Provider、トースト(画面の枠は各ルートで PageLayout を使う)
 │  │  ├─ index.tsx             # 画面1 本棚
 │  │  ├─ search.tsx            # 画面2 検索
 │  │  └─ books.$id.tsx         # 画面3 詳細・編集
 │  ├─ components/              # 見た目のみ(WF の C1〜C11 に対応)
-│  │  ├─ layout/               # Header(C1)、TabBar(C2)、OfflineBanner(C3)
+│  │  ├─ layout/               # Header(C1)、TabBar(C2)、OfflineBanner(C3)、PageLayout(C1・C2 の組み合わせ)
 │  │  ├─ book/                 # BookCard(C4)、BookCardSkeleton
 │  │  └─ common/               # ConfirmDialog(C8)、EmptyState(C10)、LoadMoreButton(C11)
 │  ├─ features/                # 画面ごとの状態・ロジック
+│  │  ├─ books/                # 本のクエリ定義(本棚・詳細・検索で共有。キーは "books" 始まり)
 │  │  ├─ shelf/                # useShelfTable(TanStack Table)、sortOptions
 │  │  ├─ search/               # useBookSearch(10件ずつ追加取得)
 │  │  └─ book-detail/          # フォーム状態、バリデーション
