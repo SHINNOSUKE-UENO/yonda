@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   Field,
@@ -12,12 +11,11 @@ import {
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import { type FormEvent, type ReactNode, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { LuBook, LuSearchX } from "react-icons/lu";
 import { ConfirmDialog } from "#/components/common/ConfirmDialog";
 import { EmptyState } from "#/components/common/EmptyState";
-import { Header } from "#/components/layout/Header";
-import { TabBar } from "#/components/layout/TabBar";
+import { PageLayout } from "#/components/layout/PageLayout";
 import { useBookForm } from "#/features/book-detail/useBookForm";
 import { useDeleteBook } from "#/features/book-detail/useDeleteBook";
 import { bookQuery } from "#/features/books/queries";
@@ -46,7 +44,7 @@ function BookDetailPage() {
   };
 
   return (
-    <DetailLayout>
+    <PageLayout title="本の詳細" showBack activeTab="shelf">
       <Stack gap="4">
         <Center>
           <Cover thumbnailUrl={book.thumbnailUrl} />
@@ -115,14 +113,14 @@ function BookDetailPage() {
           onCancel={() => setConfirmOpen(false)}
         />
       </Stack>
-    </DetailLayout>
+    </PageLayout>
   );
 }
 
 /** 削除済み・存在しない ID のとき */
 function BookNotFound() {
   return (
-    <DetailLayout>
+    <PageLayout title="本の詳細" showBack activeTab="shelf">
       <EmptyState
         icon={<LuSearchX size={24} />}
         title="本が見つかりませんでした"
@@ -132,7 +130,7 @@ function BookNotFound() {
           <Link to="/">本棚へ戻る</Link>
         </Button>
       </EmptyState>
-    </DetailLayout>
+    </PageLayout>
   );
 }
 
@@ -147,25 +145,4 @@ function Cover({ thumbnailUrl }: { thumbnailUrl: string | null }) {
   }
   // 直後にタイトルがあるため装飾扱い(alt="")
   return <Image src={thumbnailUrl} alt="" w="120px" h="180px" rounded="sm" objectFit="cover" />;
-}
-
-function DetailLayout({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <Header title="本の詳細" showBack />
-      <Box
-        as="main"
-        display="flex"
-        flexDirection="column"
-        minH="calc(100dvh - 3.5rem)"
-        px="4"
-        pt="4"
-        pb="calc(4.5rem + env(safe-area-inset-bottom))"
-      >
-        {children}
-      </Box>
-      {/* 詳細は本棚の下の階層なので、本棚タブをアクティブにする */}
-      <TabBar active="shelf" />
-    </>
-  );
 }
