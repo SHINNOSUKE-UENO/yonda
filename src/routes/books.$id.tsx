@@ -12,12 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import type { FormEvent, ReactNode } from "react";
+import { type FormEvent, type ReactNode, useState } from "react";
 import { LuBook, LuSearchX } from "react-icons/lu";
+import { ConfirmDialog } from "#/components/common/ConfirmDialog";
 import { EmptyState } from "#/components/common/EmptyState";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
 import { useBookForm } from "#/features/book-detail/useBookForm";
+import { useDeleteBook } from "#/features/book-detail/useDeleteBook";
 import { bookQuery } from "#/features/books/queries";
 import { bookIdInput } from "#/shared/book";
 
@@ -35,6 +37,8 @@ function BookDetailPage() {
   const { id } = Route.useParams();
   const { data: book } = useSuspenseQuery(bookQuery(id));
   const form = useBookForm(book);
+  const { remove, removing } = useDeleteBook(book.id);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -92,6 +96,24 @@ function BookDetailPage() {
             </Button>
           </form>
         </Stack>
+        <Button
+          variant="outline"
+          colorPalette="danger"
+          w="full"
+          h="11"
+          onClick={() => setConfirmOpen(true)}
+        >
+          削除
+        </Button>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="この本を削除しますか?"
+          description="感想メモも削除されます。元に戻せません。"
+          confirmLabel="削除する"
+          loading={removing}
+          onConfirm={remove}
+          onCancel={() => setConfirmOpen(false)}
+        />
       </Stack>
     </DetailLayout>
   );
