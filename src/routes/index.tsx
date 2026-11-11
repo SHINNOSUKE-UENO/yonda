@@ -1,4 +1,5 @@
 import { Box, Button, HStack, NativeSelect, Stack, Text } from "@chakra-ui/react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LuBookOpen } from "react-icons/lu";
@@ -8,20 +9,19 @@ import { EmptyState } from "#/components/common/EmptyState";
 import { LoadMoreButton } from "#/components/common/LoadMoreButton";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
+import { booksQuery } from "#/features/books/queries";
 import { type SortOption, sortOptions } from "#/features/shelf/sortOptions";
 import { useShelfTable } from "#/features/shelf/useShelfTable";
-import { listBooks } from "#/server/functions/books";
 
 export const Route = createFileRoute("/")({
-  loader: () => listBooks(),
+  loader: ({ context }) => context.queryClient.ensureQueryData(booksQuery()),
   component: ShelfPage,
   pendingComponent: ShelfPending,
 });
 
 function ShelfPage() {
-  const { books, total, sort, setSort, loadMoreStatus, loadMore } = useShelfTable(
-    Route.useLoaderData(),
-  );
+  const { data } = useSuspenseQuery(booksQuery());
+  const { books, total, sort, setSort, loadMoreStatus, loadMore } = useShelfTable(data);
 
   if (total === 0) {
     return (
