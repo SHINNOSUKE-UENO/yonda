@@ -1,11 +1,23 @@
-import { Box, Button, Center, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Field,
+  Heading,
+  Image,
+  Input,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { LuBook, LuSearchX } from "react-icons/lu";
 import { EmptyState } from "#/components/common/EmptyState";
 import { Header } from "#/components/layout/Header";
 import { TabBar } from "#/components/layout/TabBar";
+import { useBookForm } from "#/features/book-detail/useBookForm";
 import { bookQuery } from "#/features/books/queries";
 import { bookIdInput } from "#/shared/book";
 
@@ -22,6 +34,12 @@ export const Route = createFileRoute("/books/$id")({
 function BookDetailPage() {
   const { id } = Route.useParams();
   const { data: book } = useSuspenseQuery(bookQuery(id));
+  const form = useBookForm(book);
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    form.save();
+  };
 
   return (
     <DetailLayout>
@@ -36,6 +54,43 @@ function BookDetailPage() {
           <Text fontSize="sm" color="fg.muted">
             {book.authors}
           </Text>
+        </Stack>
+
+        {/* 送信時のエラー表示を自前で行うため、ブラウザ標準の検証(required)は使わない */}
+        <Stack asChild gap="5" mt="2">
+          <form noValidate onSubmit={onSubmit}>
+            <Field.Root invalid={!!form.readDateError}>
+              <Field.Label fontWeight="bold">
+                読了日
+                <Text as="span" color="fg.muted" fontWeight="normal">
+                  (必須)
+                </Text>
+              </Field.Label>
+              <Input
+                type="date"
+                variant="subtle"
+                h="11"
+                aria-required
+                value={form.readDate}
+                onChange={(e) => form.setReadDate(e.currentTarget.value)}
+              />
+              <Field.ErrorText>{form.readDateError}</Field.ErrorText>
+            </Field.Root>
+
+            <Field.Root>
+              <Field.Label fontWeight="bold">感想メモ</Field.Label>
+              <Textarea
+                variant="subtle"
+                minH="160px"
+                value={form.memo}
+                onChange={(e) => form.setMemo(e.currentTarget.value)}
+              />
+            </Field.Root>
+
+            <Button type="submit" w="full" h="11" disabled={!form.canSave} loading={form.saving}>
+              保存
+            </Button>
+          </form>
         </Stack>
       </Stack>
     </DetailLayout>
