@@ -1,5 +1,6 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
@@ -8,13 +9,16 @@ export function getRouter() {
 
   const router = createTanStackRouter({
     routeTree,
+    // loader から queryClient を使えるようにする
+    context: { queryClient },
     scrollRestoration: true,
     defaultPreload: "intent",
+    // 鮮度の管理は TanStack Query に任せる(Router 側で loader を毎回呼び直さない)
     defaultPreloadStaleTime: 0,
-    Wrap: ({ children }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    ),
   });
+
+  // サーバーで取得したキャッシュをクライアントへ引き継ぎ、QueryClientProvider で包む
+  setupRouterSsrQueryIntegration({ router, queryClient });
 
   return router;
 }

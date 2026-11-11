@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import type { LoadMoreStatus } from "#/components/common/LoadMoreButton";
 import { toaster } from "#/components/ui/toaster";
+import { booksQueryKey } from "#/features/books/queries";
 import { registerBook } from "#/server/functions/books";
 import { searchBooks } from "#/server/functions/search";
 import type { SearchResult } from "#/shared/book";
@@ -59,6 +60,8 @@ export function useBookSearch(query: string) {
             }
           : data,
       );
+      // 本棚の一覧を次に表示するときに取り直す
+      void queryClient.invalidateQueries({ queryKey: booksQueryKey });
       toaster.create({ type: "success", title: "登録しました" });
     },
     onError: () => toaster.create({ type: "error", title: "登録に失敗しました" }),
