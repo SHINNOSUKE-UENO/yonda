@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { z } from "zod";
 import { toaster } from "#/components/ui/toaster";
-import { booksQueryKey } from "#/features/books/queries";
+import { bookQuery, booksQueryKey } from "#/features/books/queries";
 import { updateBook } from "#/server/functions/books";
 import { type Book, type UpdateBookInput, updateBookInput } from "#/shared/book";
 
@@ -15,9 +15,12 @@ export function useBookForm(book: Book) {
 
   const mutation = useMutation({
     mutationFn: (input: UpdateBookInput) => updateBook({ data: input }),
-    // 取り直しが終わるまで保存中のままにし、ボタンが一瞬押せる状態に戻るのを防ぐ
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: booksQueryKey });
+    // 取り直さず、サーバーが返した保存後の本で詳細と一覧をその場で置き換える
+    onSuccess: (updated) => {
+      queryClient.setQueryData(bookQuery(updated.id).queryKey, updated);
+      queryClient.setQueryData<Book[]>(booksQueryKey, (books) =>
+        books?.map((b) => (b.id === updated.id ? updated : b)),
+      );
       toaster.create({ type: "success", title: "保存しました" });
     },
     onError: () => toaster.create({ type: "error", title: "保存に失敗しました" }),

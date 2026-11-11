@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { bookQuery, booksQueryKey } from "#/features/books/queries";
 import { updateBook } from "#/server/functions/books";
 import type { Book } from "#/shared/book";
 import { useBookForm } from "./useBookForm";
@@ -45,5 +46,27 @@ describe("useBookForm", () => {
 
     expect(result.current.readDateError).toBe("読了日を入力してください");
     expect(updateBook).not.toHaveBeenCalled();
+  });
+
+  it("保存すると、返ってきた本で詳細と一覧のキャッシュを置き換える", async () => {
+    const updated = { ...book, memo: "再読したい" };
+    vi.mocked(updateBook).mockResolvedValue(updated);
+    const other = { ...book, id: "22222222-2222-4222-8222-222222222222" };
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(booksQueryKey, [book, other]);
+    queryClient.setQueryData(bookQuery(book.id).queryKey, book);
+    const { result } = renderHook(() => useBookForm(book), {
+      wrapper: ({ children }) => (
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      ),
+    });
+
+    act(() => result.current.setMemo("再読したい"));
+    act(() => result.current.save());
+
+    await waitFor(() =>
+      expect(queryClient.getQueryData(bookQuery(book.id).queryKey)).toEqual(updated),
+    );
+    expect(queryClient.getQueryData(booksQueryKey)).toEqual([updated, other]);
   });
 });
