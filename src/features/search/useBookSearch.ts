@@ -9,7 +9,7 @@ import { toaster } from "#/components/ui/toaster";
 import { booksQueryKey } from "#/features/books/queries";
 import { registerBook } from "#/server/functions/books";
 import { searchBooks } from "#/server/functions/search";
-import type { SearchResult } from "#/shared/book";
+import type { Book, SearchResult } from "#/shared/book";
 
 const PAGE_SIZE = 10;
 /** 「さらに表示する」を押してから表示するまでの最低待ち時間(ms) */
@@ -46,7 +46,7 @@ export function useBookSearch(query: string) {
     // 画面に出ている書誌情報をそのまま送る(registered は送らない)
     mutationFn: ({ googleBooksId, title, authors, thumbnailUrl }: SearchResult) =>
       registerBook({ data: { googleBooksId, title, authors, thumbnailUrl } }),
-    onSuccess: (_book, { googleBooksId }) => {
+    onSuccess: (newBook, { googleBooksId }) => {
       // 全ページを取り直さず、キャッシュ上のその本だけを登録済みにする
       queryClient.setQueryData<InfiniteData<SearchResult[]>>(queryKey, (data) =>
         data
@@ -60,8 +60,8 @@ export function useBookSearch(query: string) {
             }
           : data,
       );
-      // 本棚の一覧を次に表示するときに取り直す
-      void queryClient.invalidateQueries({ queryKey: booksQueryKey });
+      // 本棚の一覧に、サーバーが返した登録後の本を追加する(未取得なら何もしない)
+      queryClient.setQueryData<Book[]>(booksQueryKey, (books) => books && [...books, newBook]);
       toaster.create({ type: "success", title: "登録しました" });
     },
     onError: () => toaster.create({ type: "error", title: "登録に失敗しました" }),
