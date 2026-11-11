@@ -1,5 +1,6 @@
 # ローカル開発用。`.dev.vars` にコピーして値を入れる(.dev.vars は Git に入れない)
 GOOGLE_BOOKS_API_KEY=
+# 例: https://<team>.cloudflareaccess.com(DEV_BYPASS_ACCESS=true の間は使わない)
 CF_ACCESS_TEAM_DOMAIN=
 CF_ACCESS_AUD=
 DEV_BYPASS_ACCESS=true
