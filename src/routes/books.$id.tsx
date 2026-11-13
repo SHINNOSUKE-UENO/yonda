@@ -83,6 +83,7 @@ function BookDetailPage() {
               <Field.Label fontWeight="bold">感想メモ</Field.Label>
               <Textarea
                 variant="subtle"
+                fontSize="md"
                 minH="160px"
                 value={form.memo}
                 onChange={(e) => form.setMemo(e.currentTarget.value)}
