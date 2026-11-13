@@ -6,20 +6,22 @@
   "main": "@tanstack/react-start/server-entry",
   "observability": { "enabled": true },
   "upload_source_maps": true,
-  // プレビュー URL は Access で保護しないため無効化(設計書 6 章)
+  // Access で保護するカスタムドメイン。デプロイ時に DNS レコードと証明書が自動で作られる
+  "routes": [{ "pattern": "yonda.run-stage.com", "custom_domain": true }],
+  // workers.dev とプレビュー URL は Access で保護しないため無効化(設計書 6 章)
+  "workers_dev": false,
   "preview_urls": false,
   // 秘密ではない変数のみ。シークレットは `wrangler secret put` で登録する
   "vars": {
-    "CF_ACCESS_TEAM_DOMAIN": "",
-    "CF_ACCESS_AUD": "",
+    "CF_ACCESS_TEAM_DOMAIN": "https://s-woody.cloudflareaccess.com",
+    "CF_ACCESS_AUD": "b28afa3111d52c339261094c94dde28b981b417835bc95868884343bd5c6874a", // gitleaks:allow AUD タグは公開値(シークレットではない)
   },
-  // database_id は本番 DB 作成時(着手順 5)に `wrangler d1 create yonda` の値へ差し替える。
-  // それまではローカル(--local)のみで使うため仮の値を入れている
+  // ローカル開発(pnpm dev)は .wrangler/ 内のローカル DB を使う(remote: true は付けない)
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "yonda",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "940d1129-4f1a-4eb9-a7a2-d4397a373f02",
       "migrations_dir": "migrations",
     },
   ],
