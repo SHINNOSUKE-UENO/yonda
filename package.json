@@ -1,0 +1,66 @@
+{
+  "name": "yonda",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "generate-routes": "tsr generate",
+    "build": "vite build",
+    "preview": "pnpm run build && vite preview",
+    "deploy": "pnpm run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.38.0",
+    "@emotion/react": "^11.14.0",
+    "@tanstack/react-devtools": "0.10.14",
+    "@tanstack/react-query": "^5.107.1",
+    "@tanstack/react-router": "1.170.46",
+    "@tanstack/react-router-devtools": "1.167.2",
+    "@tanstack/react-router-ssr-query": "^1.167.3",
+    "@tanstack/react-start": "1.169.4",
+    "@tanstack/react-table": "^9.3.1",
+    "drizzle-orm": "^0.45.4",
+    "drizzle-zod": "^0.8.3",
+    "jose": "^6.2.17",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.7.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.26.0",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@tanstack/devtools-vite": "0.8.6",
+    "@tanstack/router-cli": "^1.132.0",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "drizzle-kit": "^0.31.11",
+    "jsdom": "^31.0.0",
+    "lefthook": "^2.2.2",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.0",
+    "vitest": "^5.0.5",
+    "wrangler": "^4.156.0"
+  },
+  "engines": {
+    "node": ">=26.12.1"
+  },
+  "packageManager": "pnpm@12.16.1"
+}
