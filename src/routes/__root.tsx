@@ -10,6 +10,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "yonda" },
     ],
+    links: [
+      // Access で保護されているため、ログインの Cookie を付けて取得させる
+      { rel: "manifest", href: "/manifest.webmanifest", crossOrigin: "use-credentials" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon-180x180.png" },
+    ],
   }),
   shellComponent: RootDocument,
 });
@@ -20,6 +25,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="ja" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* アドレスバーなどの色(bg トークンと同じ)。head() の meta は同じ name を 1 つにまとめるため直接書く */}
+        <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0F0F10" media="(prefers-color-scheme: dark)" />
       </head>
       <body>
         <Provider>
