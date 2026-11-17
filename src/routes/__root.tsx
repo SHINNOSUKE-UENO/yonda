@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Provider } from "#/components/ui/provider";
 import { Toaster } from "#/components/ui/toaster";
 
@@ -20,6 +21,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  // SW(src/sw.ts)はビルド時のみ生成されるため、本番だけ登録する
+  useEffect(() => {
+    if (import.meta.env.PROD && "serviceWorker" in navigator) {
+      void navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
+
   return (
     // next-themes が <html> に dark / light クラスを付けるため、ハイドレーション警告を抑止する
     <html lang="ja" suppressHydrationWarning>
