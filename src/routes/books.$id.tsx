@@ -18,14 +18,21 @@ import { EmptyState } from "#/components/common/EmptyState";
 import { PageLayout } from "#/components/layout/PageLayout";
 import { useBookForm } from "#/features/book-detail/useBookForm";
 import { useDeleteBook } from "#/features/book-detail/useDeleteBook";
-import { bookQuery } from "#/features/books/queries";
+import { bookQuery, booksQuery, booksQueryKey } from "#/features/books/queries";
 import { bookIdInput } from "#/shared/book";
 
 export const Route = createFileRoute("/books/$id")({
   loader: ({ context, params }) => {
     // 形式が違う ID はサーバー関数の入力検証でエラーになるため、先に「見つからない」とする
     if (!bookIdInput.safeParse(params).success) throw notFound();
-    return context.queryClient.ensureQueryData(bookQuery(params.id));
+    const { queryClient } = context;
+    // 一覧に同じ本があれば最初の表示に使う(オフラインでも開ける。オンラインなら表示後に最新を取り直す)
+    return queryClient.ensureQueryData({
+      ...bookQuery(params.id),
+      initialData: () =>
+        queryClient.getQueryData(booksQuery().queryKey)?.find((book) => book.id === params.id),
+      initialDataUpdatedAt: () => queryClient.getQueryState(booksQueryKey)?.dataUpdatedAt,
+    });
   },
   component: BookDetailPage,
   notFoundComponent: BookNotFound,
