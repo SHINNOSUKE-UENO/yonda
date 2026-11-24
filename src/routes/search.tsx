@@ -1,4 +1,4 @@
-import { Button, HStack, Input, Stack } from "@chakra-ui/react";
+import { Button, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { LuCircleAlert, LuSearch } from "react-icons/lu";
@@ -7,6 +7,7 @@ import { BookCardSkeleton } from "#/components/book/BookCardSkeleton";
 import { EmptyState } from "#/components/common/EmptyState";
 import { LoadMoreButton } from "#/components/common/LoadMoreButton";
 import { PageLayout } from "#/components/layout/PageLayout";
+import { useOnline } from "#/features/network/useOnline";
 import { useBookSearch } from "#/features/search/useBookSearch";
 
 export const Route = createFileRoute("/search")({ component: SearchPage });
@@ -16,6 +17,7 @@ function SearchPage() {
   const [query, setQuery] = useState("");
   const { status, results, retry, loadMoreStatus, loadMore, register, registeringId } =
     useBookSearch(query);
+  const online = useOnline();
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,8 +25,8 @@ function SearchPage() {
   };
 
   return (
-    <PageLayout title="検索" activeTab="search">
-      <HStack asChild gap="2" mb="4">
+    <PageLayout title="検索" activeTab="search" offline={!online}>
+      <HStack asChild gap="2" mb={online ? "4" : "2"}>
         <form role="search" onSubmit={onSubmit}>
           <Input
             name="q"
@@ -35,12 +37,18 @@ function SearchPage() {
             variant="subtle"
             h="11"
             flex="1"
+            disabled={!online}
           />
-          <Button type="submit" h="11">
+          <Button type="submit" h="11" disabled={!online}>
             検索
           </Button>
         </form>
       </HStack>
+      {!online && (
+        <Text fontSize="sm" color="fg.muted" mb="4">
+          オフラインのため検索できません
+        </Text>
+      )}
 
       {status === "initial" && (
         <EmptyState
@@ -88,6 +96,7 @@ function SearchPage() {
               register={{
                 registered: book.registered,
                 loading: registeringId === book.googleBooksId,
+                disabled: !online,
                 onClick: () => register(book),
               }}
             />

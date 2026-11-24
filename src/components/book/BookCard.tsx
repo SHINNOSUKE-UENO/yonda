@@ -11,7 +11,7 @@ type Props = {
   /** 指定するとカード全体が詳細画面へのリンクになる(本棚) */
   bookId?: string;
   /** 指定すると右下に登録ボタン / 登録済みを表示する(検索結果)。bookId とは併用しない */
-  register?: { registered: boolean; loading: boolean; onClick: () => void };
+  register?: { registered: boolean; loading: boolean; disabled?: boolean; onClick: () => void };
 };
 
 /** C4 本カード */
@@ -45,6 +45,7 @@ export function BookCard({ title, authors, thumbnailUrl, readDate, bookId, regis
                   colorPalette="gray"
                   minH="11"
                   loading={register.loading}
+                  disabled={register.disabled}
                   onClick={register.onClick}
                 >
                   登録

@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import type { ComponentProps, ReactNode } from "react";
 import { Header } from "./Header";
+import { OfflineBanner } from "./OfflineBanner";
 import { TabBar } from "./TabBar";
 
 type Props = {
@@ -8,14 +9,17 @@ type Props = {
   /** 詳細画面のみ true。本棚へ戻る */
   showBack?: boolean;
   activeTab: ComponentProps<typeof TabBar>["active"];
+  /** true のときヘッダー直下にオフラインバナーを出す */
+  offline?: boolean;
   children: ReactNode;
 };
 
-/** 画面の共通枠(ヘッダー・本文・タブバー) */
-export function PageLayout({ title, showBack, activeTab, children }: Props) {
+/** 画面の共通枠(ヘッダー・オフラインバナー・本文・タブバー) */
+export function PageLayout({ title, showBack, activeTab, offline, children }: Props) {
   return (
     <>
       <Header title={title} showBack={showBack} />
+      {offline && <OfflineBanner />}
       {/* 固定タブバー(56px + セーフエリア)に末尾が隠れないよう下に余白を取る */}
       <Box
         as="main"
