@@ -18,6 +18,7 @@ import { EmptyState } from "#/components/common/EmptyState";
 import { PageLayout } from "#/components/layout/PageLayout";
 import { useBookForm } from "#/features/book-detail/useBookForm";
 import { useDeleteBook } from "#/features/book-detail/useDeleteBook";
+import { useOnline } from "#/features/network/useOnline";
 import { bookQuery, booksQuery, booksQueryKey } from "#/features/books/queries";
 import { bookIdInput } from "#/shared/book";
 
@@ -44,6 +45,8 @@ function BookDetailPage() {
   const form = useBookForm(book);
   const { remove, removing } = useDeleteBook(book.id);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  // オフラインでは閲覧のみ(入力・保存・削除を無効にする。理由はバナーで伝える)
+  const online = useOnline();
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +54,7 @@ function BookDetailPage() {
   };
 
   return (
-    <PageLayout title="本の詳細" showBack activeTab="shelf">
+    <PageLayout title="本の詳細" showBack activeTab="shelf" offline={!online}>
       <Stack gap="4">
         <Center>
           <Cover thumbnailUrl={book.thumbnailUrl} />
@@ -68,7 +71,7 @@ function BookDetailPage() {
         {/* 送信時のエラー表示を自前で行うため、ブラウザ標準の検証(required)は使わない */}
         <Stack asChild gap="5" mt="2">
           <form noValidate onSubmit={onSubmit}>
-            <Field.Root invalid={!!form.readDateError}>
+            <Field.Root invalid={!!form.readDateError} disabled={!online}>
               <Field.Label fontWeight="bold">
                 読了日
                 <Text as="span" color="fg.muted" fontWeight="normal">
@@ -86,7 +89,7 @@ function BookDetailPage() {
               <Field.ErrorText>{form.readDateError}</Field.ErrorText>
             </Field.Root>
 
-            <Field.Root>
+            <Field.Root disabled={!online}>
               <Field.Label fontWeight="bold">感想メモ</Field.Label>
               <Textarea
                 variant="subtle"
@@ -97,7 +100,13 @@ function BookDetailPage() {
               />
             </Field.Root>
 
-            <Button type="submit" w="full" h="11" disabled={!form.canSave} loading={form.saving}>
+            <Button
+              type="submit"
+              w="full"
+              h="11"
+              disabled={!online || !form.canSave}
+              loading={form.saving}
+            >
               保存
             </Button>
           </form>
@@ -107,6 +116,7 @@ function BookDetailPage() {
           colorPalette="danger"
           w="full"
           h="11"
+          disabled={!online}
           onClick={() => setConfirmOpen(true)}
         >
           削除

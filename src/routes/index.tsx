@@ -9,6 +9,7 @@ import { LoadMoreButton } from "#/components/common/LoadMoreButton";
 import { PageLayout } from "#/components/layout/PageLayout";
 import { booksQuery } from "#/features/books/queries";
 import { type SortOption, sortOptions } from "#/features/shelf/sortOptions";
+import { useOnline } from "#/features/network/useOnline";
 import { useShelfTable } from "#/features/shelf/useShelfTable";
 
 export const Route = createFileRoute("/")({
@@ -20,10 +21,12 @@ export const Route = createFileRoute("/")({
 function ShelfPage() {
   const { data } = useSuspenseQuery(booksQuery());
   const { books, total, sort, setSort, loadMoreStatus, loadMore } = useShelfTable(data);
+  // オフラインでも閲覧・並び替えはできるため、バナーを出すだけ
+  const online = useOnline();
 
   if (total === 0) {
     return (
-      <PageLayout title="本棚" activeTab="shelf">
+      <PageLayout title="本棚" activeTab="shelf" offline={!online}>
         <EmptyState
           icon={<LuBookOpen size={28} />}
           title="まだ本がありません"
@@ -38,7 +41,7 @@ function ShelfPage() {
   }
 
   return (
-    <PageLayout title="本棚" activeTab="shelf">
+    <PageLayout title="本棚" activeTab="shelf" offline={!online}>
       <HStack gap="3" mb="4">
         <NativeSelect.Root flex="1">
           <NativeSelect.Field
