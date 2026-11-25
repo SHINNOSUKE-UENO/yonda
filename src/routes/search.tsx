@@ -35,6 +35,7 @@ function SearchPage() {
             aria-label="検索キーワード"
             placeholder="タイトル・著者名で検索"
             variant="subtle"
+            fontSize="md"
             h="11"
             flex="1"
             disabled={!online}
